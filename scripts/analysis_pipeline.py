@@ -1,7 +1,9 @@
 """
 Project: Mirabilis jalapa DOD Gene Analysis
 Author: Zahidul Hasan
-Department: Botany, University of Chittagong
+Department: Botany, University of Chittagong, Bangladesh
+Email: zahidulhasan.botany.cu@gmail.com
+LinkedIn: linkedin.com/in/zahidulhasan-botany-cu
 Status: Professional Modular Version for GitHub/Streamlit
 """
 
@@ -94,4 +96,3 @@ if __name__ == "__main__":
             logging.info("প্রজেক্টের প্রথম অংশ সফলভাবে কাজ করছে।")
     else:
         logging.error("পাইপলাইন রান করা সম্ভব হয়নি।")
-        
