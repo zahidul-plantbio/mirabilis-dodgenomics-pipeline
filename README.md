@@ -1,4 +1,4 @@
-# In-silico Identification and Characterization of DOD Gene in Mirabilis jalapa
+# In silico Identification and Sequence Analysis of Flower Color Genes in Mirabilis jalapa
 
 ## 📌 Project Overview
 This repository contains a professional bioinformatics pipeline designed to analyze the **4,5-DOPA Dioxygenase (DOD)** gene in *Mirabilis jalapa* (Four o'clock flower). This gene plays a critical role in the betalain biosynthetic pathway, contributing to the species' unique floral pigmentation and Mendelian incomplete dominance.
