@@ -23,5 +23,12 @@ mirabilis-dodgenomics-pipeline/
 The pipeline successfully identified a highly conserved LigB superfamily domain in the MjDOD protein. The phylogenetic analysis confirms its evolutionary relationship with other Caryophyllales, such as Beta vulgaris.
 
 ## 👨‍🔬 Author
-**Zahidul Hasan** Department of Botany, University of Chittagong  
+**Zahidul Hasan** 
+Department of Botany, University of Chittagong, Bangladesh.  
 *Specialization: Plant Bioinformatics*
+
+## 📧 Contact
+If you have any questions, suggestions, or potential collaborations, feel free to reach out:
+
+* **LinkedIn:** [Zahidul Hasan](https://www.linkedin.com/in/zahidulhasan-botany-cu)
+* **Email:** [zahidulhasan.botany.cu@gmail.com](mailto:zahidul.hasan.botany@gmail.com)
