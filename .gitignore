@@ -216,3 +216,6 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# Custom Environment
+bio_env/git rm -r --cached bio_env
