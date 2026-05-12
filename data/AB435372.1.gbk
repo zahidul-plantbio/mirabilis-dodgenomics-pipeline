@@ -1,0 +1,60 @@
+LOCUS       AB435372                1005 bp    mRNA    linear   PLN 21-MAY-2009
+DEFINITION  Mirabilis jalapa dod mRNA for DOPA 4,5-dioxygenase, complete cds.
+ACCESSION   AB435372
+VERSION     AB435372.1
+KEYWORDS    .
+SOURCE      Mirabilis jalapa (garden four-o'clock)
+  ORGANISM  Mirabilis jalapa
+            Eukaryota; Viridiplantae; Streptophyta; Embryophyta; Tracheophyta;
+            Spermatophyta; Magnoliopsida; eudicotyledons; Gunneridae;
+            Pentapetalae; Caryophyllales; Nyctaginaceae; Mirabilis.
+REFERENCE   1
+  AUTHORS   Sasaki,N., Abe,Y., Goda,Y., Adachi,T., Kasahara,K. and Ozeki,Y.
+  TITLE     Detection of DOPA 4,5-dioxygenase (DOD) activity using recombinant
+            protein prepared from Escherichia coli cells harboring cDNA encoding
+            DOD from Mirabilis jalapa
+  JOURNAL   Plant Cell Physiol. 50 (5), 1012-1016 (2009)
+   PUBMED   19366710
+REFERENCE   2  (bases 1 to 1005)
+  AUTHORS   Sasaki,N. and Ozeki,Y.
+  TITLE     Direct Submission
+  JOURNAL   Submitted (25-APR-2008) Contact:Nobuhiro Sasaki Tokyo University of
+            Agriculture and Technology, Department of Biotechnology and Life
+            Science, Graduate School of Engineering; 2-24-16 naka-cho, Koganei,
+            Tokyo 184-8588, Japan
+FEATURES             Location/Qualifiers
+     source          1..1005
+                     /organism="Mirabilis jalapa"
+                     /mol_type="mRNA"
+                     /db_xref="taxon:3538"
+     gene            1..1005
+                     /gene="dod"
+     CDS             1..804
+                     /gene="dod"
+                     /codon_start=1
+                     /product="DOPA 4,5-dioxygenase"
+                     /protein_id="BAG80686.1"
+                     /translation="MKGTYYINHGDPLMYLKKHIKLRQFLEGWQENVVIEKPKSILIIS
+                     AHWDTNVPTVNFVEHCDTIHDFDDYPDPLYQIQYRAPGAPNLAKKVEELLKESGMECEI
+                     DTKRGLDHAAWFPLMFMYPEANIPICELSVQPSKDGIHHYNVGKALSPLLQQGVLIIGS
+                     GGTVHPSDDTPHCPNGVAPWAIEFDNWLEDALLSGRYEDVNNFKKLAPNWEISHPGQEH
+                     LYPLHVALGAAGKNPKTQLIHRSWAANGVFGYSTYNFTPTTQKTD"
+ORIGIN
+        1 atgaaaggaa catactatat aaatcatggt gatccactaa tgtacttaaa aaaacatata
+       61 aaactaaggc aattcttaga aggatggcaa gaaaatgttg ttattgaaaa accaaagagt
+      121 atacttatca tttctgctca ttgggatact aatgtaccta ctgtcaactt tgttgaacat
+      181 tgtgatacta ttcatgattt tgatgactat cctgatcctt tgtaccagat acaatatcga
+      241 gcaccgggag caccaaattt agcaaaaaag gtggaagagt tactaaaaga gtcaggaatg
+      301 gaatgtgaga tagatacaaa gagaggactc gatcatgcag catggtttcc actaatgttt
+      361 atgtatcctg aagctaatat tcctatttgt gagctctcag tccaaccaag caaagatggg
+      421 atccaccact ataatgttgg gaaagctctt tctcctcttt tgcaacaagg tgttctcatc
+      481 attggctctg gtggtactgt tcatccttct gatgatactc ctcattgtcc caatggtgtt
+      541 gctccttggg ctattgagtt tgataactgg cttgaagatg ctcttcttag tggaaggtat
+      601 gaagatgtga acaacttcaa gaaattggca ccaaattggg agatatctca tccaggacaa
+      661 gaacatttgt accctttgca tgtggcatta ggggctgctg gcaaaaatcc aaagacacaa
+      721 cttattcatc gaagctgggc tgccaatggt gtctttggat attccaccta caacttcact
+      781 cccaccactc aaaaaactga ttaaaacttc ttttatatat ctcctattct tgctttattt
+      841 cttccttgtt caattgtttt atttatgttg taatattatg taaaatttgc ctaaattggg
+      901 ctaccggtgt attatactat gactaacatt tgatatagtt gctccgacta ctatgtcaaa
+      961 gctgtaaggt gtttgatcat tgtgtaatcg aaaaatgttg gattc
+//
