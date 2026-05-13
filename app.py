@@ -125,7 +125,7 @@ if app_mode == "Dashboard Overview":
     ### The Significance and Objective of this Project: 
     This dashboard was developed to analyze the molecular characteristics of the **DOD (DOPA 4,5-dioxygenase)** gene, a key enzyme involved in the **Betalain Biosynthesis Pathway** responsible for flower pigmentation in the plant *Mirabilis jalapa*.
     
-    **Relationship with the Betalain Pathway:** The DOD enzyme catalyzes the conversion of DOPA into Betalamic Acid, a crucial precursor required for the biosynthesis of red and yellow betalain pigments. This in silico analysis provides insights into the gene’s structural features and evolutionary relationships.
+    **Relationship with the Betalain Pathway:** The DOD enzyme catalyzes the conversion of DOPA into Betalamic Acid, a crucial precursor required for the biosynthesis of red and yellow betalain pigments (betacyanins = red-violet and betaxanthins = yellow-orange). This in silico analysis provides insights into the gene’s structural features and evolutionary relationships.
     """)
      
     # লক্ষ্য করুন: এই অংশটি এখন 'if app_mode == "ড্যাশবোর্ড ওভারভিউ":' এর ভেতরে আছে
