@@ -2,6 +2,11 @@
 Project: Betalain Pathway Explorer
 Description: Interactive Streamlit App for Bioinformatics Sequence Analysis of DOD Gene in Mirabilis jalapa
 Author: Zahidul Hasan
+Department: Botany, University of Chittagong, Bangladesh
+Email: zahidulhasan.botany.cu@gmail.com
+LinkedIn: linkedin.com/in/zahidulhasan-botany-cu
+Status: Professional Modular Version for GitHub/Streamlit
+Date: May 2026
 """
 
 import streamlit as st
@@ -66,13 +71,14 @@ else:
     # যদি ইমেজ না পাওয়া যায় তবে একটি ইমোজি বা টেক্সট দেখাবে
     st.sidebar.title("🧬 DOD Explorer") 
 
-st.sidebar.title("অ্যানালাইসিস কন্ট্রোল")
-app_mode = st.sidebar.selectbox("সেকশন নির্বাচন করুন", 
-    ["ড্যাশবোর্ড ওভারভিউ", "সিকোয়েন্স এনালাইসিস", "BLAST হোমোলজি", "ফাইলোজেনেটিক্স", "ডোমেইন আর্কিটেকচার"])
+st.sidebar.title("Analysis Control Panel")
+app_mode = st.sidebar.selectbox("Select Analysis Section", 
+    ["Dashboard Overview", "Sequence Analysis", "BLAST Homology", "Phylogenetics", "Domain Architecture"])
+  # ["ড্যাশবোর্ড ওভারভিউ", "সিকোয়েন্স এনালাইসিস", "BLAST হোমোলজি", "ফাইলোজেনেটিক্স", "ডোমেইন আর্কিটেকচার"])
+st.sidebar.info("Project: Mirabilis jalapa DOD Gene Analysis (Automated Pipeline)")
+st.sidebar.write("Built by: **Zahidul Hasan**")
+st.sidebar.write("Department of Botany, University of Chittagong, Bangladesh")
 
-st.sidebar.info("প্রজেক্ট: Betalain Pathway Explorer")
-st.sidebar.write("বিভাগ: উদ্ভিদবিজ্ঞান বিভাগ, চট্টগ্রাম বিশ্ববিদ্যালয়")
-st.sidebar.write("নির্মাণে: **Zahidul Hasan**")
 
 # --- ডাটা লোড করার ফাংশন ---
 @st.cache_data
@@ -88,7 +94,7 @@ def load_blast_data():
     return None
 
 # --- ১. ড্যাশবোর্ড ওভারভিউ ---
-if app_mode == "ড্যাশবোর্ড ওভারভিউ":
+if app_mode == "Dashboard Overview":
     st.title("🧬 Betalain Pathway Explorer")
     st.subheader("In silico Identification and Sequence Analysis of DOD Gene in Mirabilis jalapa")
     
@@ -103,21 +109,23 @@ if app_mode == "ড্যাশবোর্ড ওভারভিউ":
         protein_len = len(protein_seq)
         
         with col1:
-            st.metric("জিনের দৈর্ঘ্য", f"{dna_len} bp", delta="Target Gene")
+            st.metric("Gene Length", f"{dna_len} bp", delta="Target Gene")
         with col2:
-            st.metric("GC কন্টেন্ট", f"{gc_val:.2f}%", delta="Normal Range")
+            st.metric("GC Content", f"{gc_val:.2f}%", delta="Normal Range")
         with col3:
-            st.metric("প্রোটিনের দৈর্ঘ্য", f"{protein_len} aa", delta="Translated (to stop)")
+            st.metric("Protein Length", f"{protein_len} aa", delta="Translated (to stop)")
     else:
         st.warning("GenBank ফাইলটি 'data/mirabilis_dod.gbk' পাথে পাওয়া যায়নি।")
 
 # সঠিক ইন্ডেন্টেশন (লাইন ১১০ থেকে শুরু)
+#এই ড্যাশবোর্ডটি *Mirabilis jalapa* গাছের ফুলের রঙের জন্য দায়ী **Betalain Biosynthesis Pathway**-এর একটি মূল এনজাইম **DOD (DOPA 4,5-dioxygenase)** জিনের আণবিক বৈশিষ্ট্য বিশ্লেষণের জন্য তৈরি। 
+#**Betalain Pathway-র সাথে সম্পর্ক:** DOD এনজাইমটি DOPA-কে Betalamic Acid-এ রূপান্তর করে, যা লাল ও হলুদ পিগমেন্ট তৈরির জন্য অপরিহার্য। এই ইন-সিলিকো বিশ্লেষণ জিনের গঠন ও বিবর্তনীয় সম্পর্ক বুঝতে সাহায্য করে।
     st.markdown("---")
     st.markdown("""
-    ### প্রজেক্টের গুরুত্ব ও উদ্দেশ্য:
-    এই ড্যাশবোর্ডটি *Mirabilis jalapa* গাছের ফুলের রঙের জন্য দায়ী **Betalain Biosynthesis Pathway**-এর একটি মূল এনজাইম **DOD (DOPA 4,5-dioxygenase)** জিনের আণবিক বৈশিষ্ট্য বিশ্লেষণের জন্য তৈরি। 
+    ### The Significance and Objective of this Project: 
+    This dashboard was developed to analyze the molecular characteristics of the **DOD (DOPA 4,5-dioxygenase)** gene, a key enzyme involved in the **Betalain Biosynthesis Pathway** responsible for flower pigmentation in the plant *Mirabilis jalapa*.
     
-    **Betalain Pathway-র সাথে সম্পর্ক:** DOD এনজাইমটি DOPA-কে Betalamic Acid-এ রূপান্তর করে, যা লাল ও হলুদ পিগমেন্ট তৈরির জন্য অপরিহার্য। এই ইন-সিলিকো বিশ্লেষণ জিনের গঠন ও বিবর্তনীয় সম্পর্ক বুঝতে সাহায্য করে।
+    **Relationship with the Betalain Pathway:** The DOD enzyme catalyzes the conversion of DOPA into Betalamic Acid, a crucial precursor required for the biosynthesis of red and yellow betalain pigments. This in silico analysis provides insights into the gene’s structural features and evolutionary relationships.
     """)
      
     # লক্ষ্য করুন: এই অংশটি এখন 'if app_mode == "ড্যাশবোর্ড ওভারভিউ":' এর ভেতরে আছে
@@ -127,8 +135,8 @@ if app_mode == "ড্যাশবোর্ড ওভারভিউ":
         st.warning("ফুলের ইমেজটি data ফোল্ডারে পাওয়া যায়নি।")
 
 # --- ২. সিকোয়েন্স এনালাইসিস ---
-elif app_mode == "সিকোয়েন্স এনালাইসিস":
-    st.title("🔍 নিউক্লিওটাইড এবং প্রোটিন এনালাইসিস")
+elif app_mode == "Sequence Analysis":
+    st.title("🔍 Nucleotide and Protein Analysis")
     
     # সব এনালাইসিসকে একটি মাত্র ট্যাব সেটের অধীনে আনা (আরও প্রফেশনাল)
     tab1, tab2, tab3, tab4 = st.tabs([
@@ -183,7 +191,7 @@ elif app_mode == "সিকোয়েন্স এনালাইসিস":
 
 # বাকি সেকশনগুলো অপরিবর্তিত রাখা হলো (BLAST, ফাইলোজেনেটিক্স, ইত্যাদি)
 # --- ৩. BLAST হোমোলজি ---
-elif app_mode == "BLAST হোমোলজি":
+elif app_mode == "BLAST Homology":
     st.title("💥 BLASTp Search Results")
     df = load_blast_data()
     if df is not None:
@@ -195,7 +203,7 @@ elif app_mode == "BLAST হোমোলজি":
         st.warning("BLAST ডাটা ফাইলটি 'results/blast_results.csv' পাথে পাওয়া যায়নি।")
 
 # --- ৪. ফাইলোজেনেটিক্স ---
-elif app_mode == "ফাইলোজেনেটিক্স":
+elif app_mode == "Phylogenetics":
     st.title("🌳 Evolutionary Relationships")
     st.markdown("#### Phylogenetic Tree Analysis of DOD Gene")
 
@@ -236,7 +244,7 @@ elif app_mode == "ফাইলোজেনেটিক্স":
 #         st.error("ডোমেইন ইমেজটি পাওয়া যায়নি।")
 
 # --- ৫. প্রোটিন স্ট্রাকচার এনালাইসিস ---
-elif app_mode == "ডোমেইন আর্কিটেকচার":
+elif app_mode == "Domain Architecture":
     st.title("🏗️ Protein Structure & Domain Architecture")
     
     # দুটি ট্যাব তৈরি করা (একটি ৩ডি ভিউয়ের জন্য, একটি ডোমেইন ইমেজের জন্য)
@@ -261,7 +269,7 @@ elif app_mode == "ডোমেইন আর্কিটেকচার":
             
             showmol(view, height=400, width='100%')
             
-            st.info("মাউস ব্যবহার করে আপনি মডেলটি জুম (Zoom) বা রোটেট (Rotate) করতে পারেন।")
+            st.info("The model can be interactively zoomed and rotated using the mouse.")
             
             # ডাউনলোড বাটন
             st.download_button("Download PDB File", pdb_data, "DOD_model.pdb")
