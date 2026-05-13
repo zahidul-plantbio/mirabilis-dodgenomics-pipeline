@@ -1,6 +1,6 @@
 """
-Project: Mirabilis jalapa DOD Gene Analysis Dashboard
-Description: Interactive Streamlit App for Bioinformatics Sequence Analysis
+Project: Betalain Pathway Explorer
+Description: Interactive Streamlit App for Bioinformatics Sequence Analysis of DOD Gene in Mirabilis jalapa
 Author: Zahidul Hasan
 """
 
@@ -13,10 +13,11 @@ from Bio import SeqIO
 from Bio.SeqUtils import gc_fraction
 import plotly.express as px
 import plotly.graph_objects as go
+from collections import Counter  # এই লাইনটি যোগ করা হয়েছে এরর ঠিক করার জন্য
 
 # --- পেজ কনফিগারেশন ---
 st.set_page_config(
-    page_title="Mirabilis DOD Analyzer",
+    page_title="Betalain Pathway Explorer",
     page_icon="🧬",
     layout="wide",
     initial_sidebar_state="expanded",
@@ -43,6 +44,7 @@ st.markdown("""
 
 # --- পাথ সেটআপ ---
 BASE_DIR = os.getcwd()
+# GitHub রিপোজিটরি স্ট্রাকচার অনুযায়ী পাথ অ্যাডজাস্ট করা হয়েছে
 DATA_DIR = os.path.join(BASE_DIR, "data")
 RESULTS_DIR = os.path.join(BASE_DIR, "results")
 
@@ -56,7 +58,8 @@ st.sidebar.title("অ্যানালাইসিস কন্ট্রোল"
 app_mode = st.sidebar.selectbox("সেকশন নির্বাচন করুন", 
     ["ড্যাশবোর্ড ওভারভিউ", "সিকোয়েন্স এনালাইসিস", "BLAST হোমোলজি", "ফাইলোজেনেটিক্স", "ডোমেইন আর্কিটেকচার"])
 
-st.sidebar.info("প্রজেক্ট: Mirabilis jalapa DOD Gene Analysis")
+st.sidebar.info("প্রজেক্ট: Betalain Pathway Explorer")
+st.sidebar.write("বিভাগ: উদ্ভিদবিজ্ঞান বিভাগ, চট্টগ্রাম বিশ্ববিদ্যালয়")
 st.sidebar.write("নির্মাণে: **Zahidul Hasan**")
 
 # --- ডাটা লোড করার ফাংশন ---
@@ -74,8 +77,8 @@ def load_blast_data():
 
 # --- ১. ড্যাশবোর্ড ওভারভিউ ---
 if app_mode == "ড্যাশবোর্ড ওভারভিউ":
-    st.title("🧬 Mirabilis jalapa DOD Gene Analysis Dashboard")
-    st.subheader("In silico Identification and Sequence Analysis")
+    st.title("🧬 Betalain Pathway Explorer")
+    st.subheader("In silico Identification and Sequence Analysis of DOD Gene in Mirabilis jalapa")
     
     col1, col2, col3 = st.columns(3)
     
@@ -90,16 +93,18 @@ if app_mode == "ড্যাশবোর্ড ওভারভিউ":
             st.metric("GC কন্টেন্ট", f"{gc_val:.2f}%", delta="Normal Range")
         with col3:
             st.metric("প্রোটিনের দৈর্ঘ্য", f"{int(dna_len/3)} aa", delta="Translated")
+    else:
+        st.warning("GenBank ফাইলটি 'data/mirabilis_dod.gbk' পাথে পাওয়া যায়নি।")
 
     st.markdown("---")
     st.markdown("""
-    ### প্রজেক্টের উদ্দেশ্য:
-    এই ড্যাশবোর্ডটি *Mirabilis jalapa* গাছের ফুলের রঙের জন্য দায়ী **DOD (DOPA 4,5-dioxygenase)** জিনের সিকোয়েন্স এনালাইসিস এবং বিবর্তনীয় সম্পর্ক প্রদর্শনের জন্য তৈরি করা হয়েছে।
+    ### প্রজেক্টের গুরুত্ব ও উদ্দেশ্য:
+    এই ড্যাশবোর্ডটি *Mirabilis jalapa* গাছের ফুলের রঙের জন্য দায়ী **Betalain Biosynthesis Pathway**-এর একটি মূল এনজাইম **DOD (DOPA 4,5-dioxygenase)** জিনের আণবিক বৈশিষ্ট্য বিশ্লেষণের জন্য তৈরি। 
     
-    **ব্যবহৃত প্রযুক্তি:** Python, Biopython, Streamlit, Plotly, Seaborn.
+    **Betalain Pathway-র সাথে সম্পর্ক:** DOD এনজাইমটি DOPA-কে Betalamic Acid-এ রূপান্তর করে, যা লাল ও হলুদ পিগমেন্ট তৈরির জন্য অপরিহার্য। এই ইন-সিলিকো বিশ্লেষণ জিনের গঠন ও বিবর্তনীয় সম্পর্ক বুঝতে সাহায্য করে।
     """)
     
-    st.image("https://upload.wikimedia.org/wikipedia/commons/0/0d/Mirabilis_jalapa_Flower.jpg", caption="Mirabilis jalapa - Four O'Clock Flower", width=500)
+    st.image("https://upload.wikimedia.org/wikipedia/commons/0/0d/Mirabilis_jalapa_Flower.jpg", caption="Mirabilis jalapa - Flower Pigmentation Study", width=500)
 
 # --- ২. সিকোয়েন্স এনালাইসিস ---
 elif app_mode == "সিকোয়েন্স এনালাইসিস":
@@ -111,6 +116,7 @@ elif app_mode == "সিকোয়েন্স এনালাইসিস":
         
         with tab1:
             st.write("#### DNA বেস ডিস্ট্রিবিউশন")
+            # Counter এখন ইমপোর্ট করা আছে, তাই আর এরর আসবে না
             bases = dict(Counter(record.seq))
             fig_dna = px.pie(values=list(bases.values()), names=list(bases.keys()), 
                            title="Base Composition (A, T, G, C)", color_discrete_sequence=px.colors.qualitative.Pastel)
@@ -124,6 +130,8 @@ elif app_mode == "সিকোয়েন্স এনালাইসিস":
             
             fig_aa = px.bar(aa_df, x='Amino Acid', y='Frequency', color='Frequency', title="Top Amino Acids in DOD Protein")
             st.plotly_chart(fig_aa)
+    else:
+        st.error("সিকোয়েন্স ডাটা লোড করা সম্ভব হয়নি।")
 
 # --- ৩. BLAST হোমোলজি ---
 elif app_mode == "BLAST হোমোলজি":
@@ -132,16 +140,13 @@ elif app_mode == "BLAST হোমোলজি":
     
     if df is not None:
         st.write("NCBI SwissProt ডাটাবেস থেকে প্রাপ্ত টপ হিটসমূহ:")
-        
-        # ইন্টারেক্টিভ টেবিল
         st.dataframe(df.style.highlight_max(axis=0, subset=['Identity (%)'], color='lightgreen'))
         
-        # ইন্টারেক্টিভ চার্ট
         fig_blast = px.scatter(df, x="Identity (%)", y="E-value", size="Identity (%)", color="Organism Name",
                              hover_name="Organism Name", log_y=True, title="Blast Hits: Identity vs E-value")
         st.plotly_chart(fig_blast, use_container_width=True)
     else:
-        st.warning("BLAST ডাটা ফাইল খুঁজে পাওয়া যায়নি। দয়া করে আগে পাইপলাইন রান করুন।")
+        st.warning("BLAST ডাটা ফাইলটি 'results/blast_results.csv' পাথে পাওয়া যায়নি।")
 
 # --- ৪. ফাইলোজেনেটিক্স ---
 elif app_mode == "ফাইলোজেনেটিক্স":
@@ -152,11 +157,10 @@ elif app_mode == "ফাইলোজেনেটিক্স":
         st.image(tree_img, caption="Phylogenetic Tree (Neighbor-Joining Method)", use_container_width=True)
         st.markdown("""
         **বিশ্লেষণ:**
-        - এই গাছটি দেখায় কিভাবে *Mirabilis jalapa* এর DOD প্রোটিন অন্যান্য প্রজাতির (যেমন *Beta vulgaris*, *Spinacia oleracea*) সাথে সম্পর্কিত।
-        - জেনেটিক ডিস্ট্যান্স যত কম, সম্পর্ক তত কাছাকাছি।
+        এই ফাইলোজেনেটিক ট্রি-টি প্রমাণ করে যে *Mirabilis jalapa*-র DOD প্রোটিন Caryophyllales বর্গের অন্যান্য উদ্ভিদ যেমন বিট (*Beta vulgaris*) এর সাথে বিবর্তনীয়ভাবে ঘনিষ্ঠভাবে সম্পর্কিত।
         """)
     else:
-        st.error("ট্রি ইমেজটি জেনারেট করা হয়নি।")
+        st.error("ফাইলোজেনেটিক ট্রি ইমেজটি পাওয়া যায়নি।")
 
 # --- ৫. ডোমেইন আর্কিটেকচার ---
 elif app_mode == "ডোমেইন আর্কিটেকচার":
@@ -165,7 +169,7 @@ elif app_mode == "ডোমেইন আর্কিটেকচার":
     
     if os.path.exists(domain_img):
         st.image(domain_img, caption="Conserved Functional Domains", use_container_width=True)
-        st.info("LigB Domain এবং বিশেষ কনসার্ভড মোটিফগুলো চিহ্নিত করা হয়েছে যা Betalain বায়োসিন্থেসিসে ভূমিকা রাখে।")
+        st.info("এখানে 'LigB Domain' চিহ্নিত করা হয়েছে যা Betalamic Acid তৈরির রাসায়নিক বিক্রিয়ায় অনুঘটক হিসেবে কাজ করে।")
     else:
         st.error("ডোমেইন ইমেজটি পাওয়া যায়নি।")
 
