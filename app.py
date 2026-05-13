@@ -55,7 +55,7 @@ LOGO_IMG = os.path.join(DATA_DIR, "logo.png")
 
 # --- সাইডবার ---
 if os.path.exists(LOGO_IMG):
-    st.sidebar.image(LOGO_IMG, width=200)
+    st.sidebar.image(LOGO_IMG, width=250)
 else:
     # যদি ইমেজ না পাওয়া যায় তবে একটি ইমোজি বা টেক্সট দেখাবে
     st.sidebar.title("🧬 DOD Explorer") 
