@@ -253,13 +253,13 @@ elif app_mode == "ডোমেইন আর্কিটেকচার":
                 pdb_data = f.read()
             
             # ৩ডি ভিউ সেটআপ
-            view = py3Dmol.view(width=800, height=500)
+            view = py3Dmol.view(width=None, height=400)
             view.addModel(pdb_data, 'pdb')
             view.setStyle({'cartoon': {'color': 'spectrum'}}) # রঙিন কার্টুন স্টাইল
             view.zoomTo()
             view.spin(True) # মডেলটি ধীরে ধীরে ঘুরবে
             
-            showmol(view, height=500, width=800)
+            showmol(view, height=400, width='100%')
             
             st.info("মাউস ব্যবহার করে আপনি মডেলটি জুম (Zoom) বা রোটেট (Rotate) করতে পারেন।")
             
