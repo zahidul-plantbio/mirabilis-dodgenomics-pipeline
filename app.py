@@ -50,6 +50,7 @@ RESULTS_DIR = os.path.join(BASE_DIR, "results")
 # ফাইল পাথ নিশ্চিত করা
 GBK_FILE = os.path.join(DATA_DIR, "mirabilis_dod.gbk")
 BLAST_CSV = os.path.join(RESULTS_DIR, "blast_results.csv")
+FLOWER_IMG = os.path.join(DATA_DIR, "mirabilis_jalapa_flower.png")
 
 # --- সাইডবার ---
 st.sidebar.image("https://upload.wikimedia.org/wikipedia/commons/thumb/e/e5/Phylo_tree.svg/1200px-Phylo_tree.svg.png", width=100)
@@ -106,7 +107,10 @@ if app_mode == "ড্যাশবোর্ড ওভারভিউ":
     **Betalain Pathway-র সাথে সম্পর্ক:** DOD এনজাইমটি DOPA-কে Betalamic Acid-এ রূপান্তর করে, যা লাল ও হলুদ পিগমেন্ট তৈরির জন্য অপরিহার্য। এই ইন-সিলিকো বিশ্লেষণ জিনের গঠন ও বিবর্তনীয় সম্পর্ক বুঝতে সাহায্য করে।
     """)
     
-    st.image("https://upload.wikimedia.org/wikipedia/commons/thumb/0/0d/Mirabilis_jalapa_Flower.jpg/800px-Mirabilis_jalapa_Flower.jpg", caption="Mirabilis jalapa - Flower Pigmentation Study", width=500)
+    if os.path.exists(FLOWER_IMG):
+    st.image(FLOWER_IMG, caption="Mirabilis jalapa - Flower Pigmentation Study", width=500)
+else:
+    st.error("ফুলের ইমেজটি data ফোল্ডারে পাওয়া যায়নি। নিশ্চিত করুন ফাইলের নাম এবং এক্সটেনশন সঠিক আছে।")
 
 # --- ২. সিকোয়েন্স এনালাইসিস ---
 elif app_mode == "সিকোয়েন্স এনালাইসিস":
