@@ -51,9 +51,15 @@ RESULTS_DIR = os.path.join(BASE_DIR, "results")
 GBK_FILE = os.path.join(DATA_DIR, "mirabilis_dod.gbk")
 BLAST_CSV = os.path.join(RESULTS_DIR, "blast_results.csv")
 FLOWER_IMG = os.path.join(DATA_DIR, "mirabilis_jalapa_flower.png") # এক্সটেনশন png নিশ্চিত করুন
+LOGO_IMG = os.path.join(DATA_DIR, "logo.png")
 
 # --- সাইডবার ---
-st.sidebar.image("https://upload.wikimedia.org/wikipedia/commons/thumb/e/e5/Phylo_tree.svg/1200px-Phylo_tree.svg.png", width=100)
+if os.path.exists(LOGO_IMG):
+    st.sidebar.image(LOGO_IMG, width=100)
+else:
+    # যদি ইমেজ না পাওয়া যায় তবে একটি ইমোজি বা টেক্সট দেখাবে
+    st.sidebar.title("🧬 DOD Explorer") 
+
 st.sidebar.title("অ্যানালাইসিস কন্ট্রোল")
 app_mode = st.sidebar.selectbox("সেকশন নির্বাচন করুন", 
     ["ড্যাশবোর্ড ওভারভিউ", "সিকোয়েন্স এনালাইসিস", "BLAST হোমোলজি", "ফাইলোজেনেটিক্স", "ডোমেইন আর্কিটেকচার"])
