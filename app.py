@@ -52,6 +52,7 @@ GBK_FILE = os.path.join(DATA_DIR, "mirabilis_dod.gbk")
 BLAST_CSV = os.path.join(RESULTS_DIR, "blast_results.csv")
 FLOWER_IMG = os.path.join(DATA_DIR, "mirabilis_jalapa_flower.png") # এক্সটেনশন png নিশ্চিত করুন
 LOGO_IMG = os.path.join(DATA_DIR, "logo.png")
+PHYLO_TREE_IMG = os.path.join(RESULTS_DIR, "phylogenetic_tree_dod.png") # MEGA থেকে প্রাপ্ত ইমেজ
 
 # --- সাইডবার ---
 if os.path.exists(LOGO_IMG):
@@ -161,11 +162,34 @@ elif app_mode == "BLAST হোমোলজি":
 # --- ৪. ফাইলোজেনেটিক্স ---
 elif app_mode == "ফাইলোজেনেটিক্স":
     st.title("🌳 Evolutionary Relationships")
-    tree_img = os.path.join(RESULTS_DIR, "phylogenetic_tree.png")
-    if os.path.exists(tree_img):
-        st.image(tree_img, caption="Phylogenetic Tree (Neighbor-Joining Method)", use_container_width=True)
-    else:
-        st.error("ফাইলোজেনেটিক ট্রি ইমেজটি পাওয়া যায়নি।")
+    st.markdown("#### Phylogenetic Tree Analysis of DOD Gene")
+
+    # প্রথম ইমেজ: General/Pipeline Tree
+    tree_img_1 = os.path.join(RESULTS_DIR, "phylogenetic_tree.png")
+    if os.path.exists(tree_img_1):
+        st.subheader("Pipeline Generated Tree")
+        st.image(tree_img_1, caption="Phylogenetic Tree (Auto-generated)", use_container_width=True)
+    
+    st.markdown("---") # একটি ডিভাইডার লাইন
+
+    # দ্বিতীয় ইমেজ: MEGA specific Tree
+    # নিশ্চিত করুন পাথ সেটআপে PHYLO_TREE_IMG = "phylogenetic_tree_dod.png" আছে
+    if os.path.exists(PHYLO_TREE_IMG):
+        st.subheader("Custom MEGA Analysis")
+        st.image(PHYLO_TREE_IMG, caption="Phylogenetic Tree constructed using MEGA 12", use_container_width=True)
+        
+        # এনালাইসিসের বিস্তারিত বর্ণনা
+        st.info("""
+        **Methodology Details (MEGA 12):**
+        - **Method:** Neighbor-Joining (NJ)
+        - **Bootstrap:** 1000 replicates
+        - **Model:** Poisson correction
+        """)
+    
+    # যদি কোনো ইমেজই না পাওয়া যায়
+    if not os.path.exists(tree_img_1) and not os.path.exists(PHYLO_TREE_IMG):
+        st.error("দুঃখিত, কোনো ফাইলোজেনেটিক ট্রি ইমেজ পাওয়া যায়নি।")
+        
 
 # --- ৫. ডোমেইন আর্কিটেকচার ---
 elif app_mode == "ডোমেইন আর্কিটেকচার":
