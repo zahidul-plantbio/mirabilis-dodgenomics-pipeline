@@ -17,24 +17,22 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import numpy as np
 from collections import Counter
-
-# Biopython Imports
 from Bio import Entrez, SeqIO, Phylo, AlignIO
 from Bio.SeqUtils import gc_fraction
 from Bio.Blast import NCBIWWW, NCBIXML
 from Bio.Align import MultipleSeqAlignment
 from Bio.Phylo.TreeConstruction import DistanceCalculator, DistanceTreeConstructor
 
-# --- গ্লোবাল কনফিগারেশন এবং রিলেটিভ পাথ ---
+# --- Global Configuration and Relative Path ---
 Entrez.email = "zahidulhasan.botany.cu@gmail.com"
 ACCESSION_ID = "AB435372.1"
 
-# ফোল্ডার পাথ সেটআপ (আপনার রিপোজিটরি স্ট্রাকচার অনুযায়ী)
+# Folder Path Setup (According to Repository Structure)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__))) if "__file__" in locals() else os.getcwd()
 DATA_DIR = os.path.join(BASE_DIR, "data")
 RESULTS_DIR = os.path.join(BASE_DIR, "results")
 
-# ডাটা ফাইল পাথ সমূহ (results/ এর ভেতর)
+# Data file paths (inside the results/ directory)
 GBK_FILE = os.path.join(DATA_DIR, "mirabilis_dod.gbk")
 BLAST_XML = os.path.join(RESULTS_DIR, "blast_results.xml")
 BLAST_CSV = os.path.join(RESULTS_DIR, "blast_results.csv")
@@ -43,7 +41,7 @@ SUMMARY_CSV = os.path.join(RESULTS_DIR, "blast_summary.csv")
 PROTEIN_FASTA = os.path.join(RESULTS_DIR, "protein_sequence.fasta")
 MSA_FILE = os.path.join(DATA_DIR, "msa_input.fasta")
 
-# ইমেজ ফাইল পাথ সমূহ (results/ এর ভেতর .png হিসেবে)
+# Image file paths (inside the results/ directory)
 IMG_GENOMIC = os.path.join(RESULTS_DIR, "genomic_analysis.png")
 IMG_SEQ_LENGTH = os.path.join(RESULTS_DIR, "sequence_length_comparison.png")
 IMG_TOP_AA = os.path.join(RESULTS_DIR, "top_amino_acids.png")
@@ -51,16 +49,16 @@ IMG_CONSERVED = os.path.join(RESULTS_DIR, "conserved_regions.png")
 IMG_TREE = os.path.join(RESULTS_DIR, "phylogenetic_tree.png")
 IMG_DOMAIN = os.path.join(RESULTS_DIR, "conserved_domain.png")
 
-# ডিরেক্টরি নিশ্চিত করা
+# Directory validation / Ensuring directory existence
 os.makedirs(DATA_DIR, exist_ok=True)
 os.makedirs(RESULTS_DIR, exist_ok=True)
 
 def step1_retrieve_data(accession):
-    """[ধাপ ১] NCBI থেকে জেনব্যাক ডাটা রিট্রিভ করা"""
-    print(f"\n[ধাপ ১] ডাটা রিট্রিভাল শুরু হচ্ছে ({accession})...")
+    """[Step 1] Retrieve GenBank data from NCBI and save locally"""
+    print(f"\n[Step 1] Retrieving data ({accession})...")
     
     if os.path.exists(GBK_FILE):
-        print(f"-> লোকাল ফাইল '{GBK_FILE}' পাওয়া গেছে। ডাউনলোড স্কিপ করা হলো।")
+        print(f"-> Local file '{GBK_FILE}' found. Skipping download.")
         return SeqIO.read(GBK_FILE, "genbank")
     
     try:
@@ -68,15 +66,15 @@ def step1_retrieve_data(accession):
         record = SeqIO.read(handle, "genbank")
         handle.close()
         SeqIO.write(record, GBK_FILE, "genbank")
-        print("-> [সফলতা] ডাটা সফলভাবে সংরক্ষিত হয়েছে।")
+        print("-> [Success] Data saved successfully.")
         return record
     except Exception as e:
-        print(f"-> [Error] ডাটা সংগ্রহে সমস্যা: {e}")
+        print(f"-> [Error] Error occurred while retrieving data: {e}")
         return None
 
 def step2_sequence_analysis(record):
-    """[ধাপ ২] সিকোয়েন্স এনালাইসিস এবং ট্রান্সলেশন"""
-    print("\n[ধাপ ২] সিকোয়েন্স এনালাইসিস চলছে...")
+    """[Step 2] Sequence Analysis and Translation"""
+    print("\n[Step 2] Sequence analysis is running...")
     if not record: return None, None
     
     try:
@@ -84,24 +82,24 @@ def step2_sequence_analysis(record):
         gc_val = gc_fraction(dna_seq) * 100
         protein_seq = dna_seq.translate(to_stop=True)
         
-        # প্রোটিন সিকোয়েন্স ফাস্টা ফাইলে সেভ করা
+        # Save the protein sequence in FASTA file format
         with open(PROTEIN_FASTA, "w") as f:
             f.write(f">Mirabilis_jalapa_DOD_Protein\n{protein_seq}\n")
         
-        print(f"-> জিনের দৈর্ঘ্য: {len(dna_seq)} bp")
+        print(f"-> Gene Length: {len(dna_seq)} bp")
         print(f"-> GC Content: {gc_val:.2f}%")
-        print(f"-> প্রোটিনের দৈর্ঘ্য: {len(protein_seq)} aa")
-        print(f"-> প্রোটিন সিকোয়েন্স '{PROTEIN_FASTA}' এ সেভ হয়েছে।")
+        print(f"-> Protein Length: {len(protein_seq)} aa")
+        print(f"-> Protein sequence saved to '{PROTEIN_FASTA}'.")
         return gc_val, protein_seq
     except Exception as e:
-        print(f"-> [Error] এনালাইসিসে সমস্যা: {e}")
+        print(f"-> [Error] Error occurred during analysis: {e}")
         return None, None
 
 def step3_run_blast(protein_seq):
-    """[ধাপ ৩] অনলাইন BLAST রান করা"""
-    print("\n[ধাপ ৩] অনলাইন BLAST রান হচ্ছে (এটি সময় নিতে পারে)...")
+    """[Step 3] Run Online BLAST Analysis"""
+    print("\n[Step 3] Running Online BLAST (This may take some time)...")
     if os.path.exists(BLAST_XML):
-        print("-> BLAST রেজাল্ট লোকাল স্টোরেজে বিদ্যমান।")
+        print("-> BLAST results found in local storage.")
         return True
     
     try:
@@ -109,20 +107,20 @@ def step3_run_blast(protein_seq):
         blast_content = result_handle.read()
         with open(BLAST_XML, "w") as out_handle:
             out_handle.write(blast_content)
-        # Requirement অনুযায়ী summary.xml এও সেভ করা
+        # Also save it in summary.xml according to the requirements.
         with open(SUMMARY_XML, "w") as out_handle:
             out_handle.write(blast_content)
             
         result_handle.close()
-        print("-> [সফলতা] BLAST সম্পন্ন হয়েছে।")
+        print("-> [Success] BLAST completed successfully.")
         return True
     except Exception as e:
-        print(f"-> [Error] BLAST এরর: {e}")
+        print(f"-> [Error] BLAST error: {e}")
         return False
 
 def step4_parse_blast():
-    """[ধাপ ৪] BLAST রেজাল্ট পার্স করা এবং CSV জেনারেশন"""
-    print("\n[ধাপ ৪] BLAST রেজাল্ট বিশ্লেষণ করা হচ্ছে...")
+    """[Step 4] Parse BLAST Results and Generate CSV"""
+    print("\n[Step 4] Parsing BLAST results...")
     if not os.path.exists(BLAST_XML): return None
     
     blast_data = []
@@ -142,24 +140,24 @@ def step4_parse_blast():
                 })
         
         df = pd.DataFrame(blast_data)
-        # Requirement অনুযায়ী .csv ফাইলগুলো সেভ করা
+        # Also save it in .csv files according to the requirements.
         df.to_csv(BLAST_CSV, index=False)
         df.to_csv(SUMMARY_CSV, index=False)
         print(df.head(5).to_string(index=False))
         return df
     except Exception as e:
-        print(f"-> [Error] পার্সিং সমস্যা: {e}")
+        print(f"-> [Error] Parsing error: {e}")
         return None
 
 def step5_visualize(gc_value, df):
-    """[ধাপ ৫] ফলাফল ভিজুয়ালাইজেশন"""
-    print("\n[ধাপ ৫] ফলাফল ভিজুয়ালাইজেশন এবং 'genomic_analysis.png' সেভ হচ্ছে...")
+    """[Step 5] Visualize Results"""
+    print("\n[Step 5] Visualizing results and saving 'genomic_analysis.png'...")
     if df is None: return
 
     try:
         plt.figure(figsize=(14, 6))
         
-        # ১. DNA Composition (পাই চার্ট)
+        # ১. DNA Composition (Pie chart.)
         plt.subplot(1, 2, 1)
         plt.pie([gc_value, 100-gc_value], labels=['GC Content', 'AT Content'], 
                 autopct='%1.1f%%', colors=['#ff9999','#66b3ff'], explode=(0.05, 0), startangle=140)
@@ -178,11 +176,11 @@ def step5_visualize(gc_value, df):
         plt.savefig(IMG_GENOMIC)
         plt.show()
     except Exception as e:
-        print(f"-> [Error] গ্রাফ তৈরিতে সমস্যা: {e}")
+        print(f"-> [Error] Error occurred while creating the graph: {e}")
 
 def step6_msa_preparation(protein_seq, df):
-    """[ধাপ ৬] MSA এর জন্য সিকোয়েন্স সংগ্রহ ও ডায়াগ্রাম সেভ করা"""
-    print("\n[ধাপ ৬] MSA প্রস্তুতি এবং ডায়াগ্রাম জেনারেশন...")
+    """[Step 6] Prepare Sequences for MSA and Save Diagram"""
+    print("\n[Step 6] Preparing sequences for MSA and generating diagram...")
     if df is None: return
     
     if os.path.exists(MSA_FILE): os.remove(MSA_FILE)
@@ -210,7 +208,7 @@ def step6_msa_preparation(protein_seq, df):
         
         records = list(SeqIO.parse(MSA_FILE, "fasta"))
         
-        # --- ডায়াগ্রাম ১: sequence_length_comparison.png ---
+        # --- Diagram 1: sequence_length_comparison.png ---
         plt.figure(figsize=(12, 6))
         names = [r.id for r in records]
         lengths = [len(r.seq) for r in records]
@@ -227,7 +225,7 @@ def step6_msa_preparation(protein_seq, df):
         plt.savefig(IMG_SEQ_LENGTH)
         plt.show()
 
-        # --- ডায়াগ্রাম ২: top_amino_acids.png ---
+        # --- Diagram 2: top_amino_acids.png ---
         plt.figure(figsize=(8, 8))
         aa_counts = Counter(records[0].seq)
         top_aa = dict(Counter(aa_counts).most_common(10))
@@ -237,7 +235,7 @@ def step6_msa_preparation(protein_seq, df):
         plt.savefig(IMG_TOP_AA)
         plt.show()
 
-        # --- ডায়াগ্রাম ৩: conserved_regions.png ---
+        # --- Diagram 3: conserved_regions.png ---
         plt.figure(figsize=(14, 5))
         num_species = len(records)
         alignment_length = 100 
@@ -253,12 +251,12 @@ def step6_msa_preparation(protein_seq, df):
         
         return records
     except Exception as e:
-        print(f"-> [Error] MSA ডায়াগ্রাম তৈরিতে সমস্যা: {e}")
+        print(f"-> [Error] Error occurred while creating MSA diagram: {e}")
         return None
 
 def step7_phylogenetic_tree():
-    """[ধাপ ৭] ফাইলোজেনেটিক ট্রি নির্মাণ ও phylogenetic_tree.png সেভ"""
-    print("\n[ধাপ ৭] ফাইলোজেনেটিক ট্রি তৈরি হচ্ছে...")
+    """[Step 7] Build Phylogenetic Tree and Save phylogenetic_tree.png"""
+    print("\n[Step 7] Building phylogenetic tree...")
     if not os.path.exists(MSA_FILE): return
 
     try:
@@ -282,11 +280,11 @@ def step7_phylogenetic_tree():
         plt.savefig(IMG_TREE)
         plt.show()
     except Exception as e:
-        print(f"-> [Error] ট্রি নির্মাণে সমস্যা: {e}")
+        print(f"-> [Error] Error occurred while building the tree: {e}")
 
 def step8_domain_analysis():
-    """[ধাপ ৮] কনসার্ভড ডোমেইন ভিজ্যুয়ালাইজেশন ও conserved_domain.png সেভ"""
-    print("\n[ধাপ ৮] কনসার্ভড ডোমেইন অ্যানালাইসিস শুরু হচ্ছে...")
+    """[Step 8] Visualize Conserved Domains and Save conserved_domain.png"""
+    print("\n[Step 8] Starting conserved domain analysis...")
     try:
         domains = {
             "Mirabilis jalapa": [(50, 150, "LigB Domain"), (200, 280, "Conserved Motif")],
@@ -306,15 +304,15 @@ def step8_domain_analysis():
         plt.savefig(IMG_DOMAIN)
         plt.show()
     except Exception as e:
-        print(f"-> [Error] ডোমেইন অ্যানালাইসিসে সমস্যা: {e}")
+        print(f"-> [Error] Error occurred while analyzing domains: {e}")
 
-# --- প্রধান এক্সিকিউশন ফাংশন ---
+# --- Main execution function---
 def main():
     print("="*60)
     print("   MIRABILIS JALAPA DOD GENETICS PIPELINE - PROFESSIONAL")
     print("="*60)
     
-    # পাইপলাইন রান করা
+    # Run the pipeline step by step
     record = step1_retrieve_data(ACCESSION_ID)
     if not record: return
     
@@ -328,7 +326,7 @@ def main():
         step8_domain_analysis()
 
     print("\n" + "="*60)
-    print(f"   পাইপলাইন সফলভাবে সম্পন্ন হয়েছে। সকল ডাটা '{RESULTS_DIR}' এ সংরক্ষিত।")
+    print(f"   Pipeline completed successfully. All data saved to '{RESULTS_DIR}'.")
     print("="*60)
 
 if __name__ == "__main__":

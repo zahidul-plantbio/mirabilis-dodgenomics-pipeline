@@ -22,7 +22,7 @@ from collections import Counter
 from stmol import showmol
 import py3Dmol
 
-# --- পেজ কনফিগারেশন ---
+# --- Page configuration ---
 st.set_page_config(
     page_title="Betalain Pathway Explorer",
     page_icon="🧬",
@@ -30,7 +30,7 @@ st.set_page_config(
     initial_sidebar_state="expanded",
 )
 
-# --- কাস্টম স্টাইল ---
+# --- Custom Style ---
 st.markdown("""
     <style>
     .main {
@@ -49,38 +49,38 @@ st.markdown("""
     </style>
     """, unsafe_allow_html=True)
 
-# --- পাথ সেটআপ ---
+# --- Path Setup ---
 BASE_DIR = os.getcwd()
 DATA_DIR = os.path.join(BASE_DIR, "data")
 RESULTS_DIR = os.path.join(BASE_DIR, "results")
 
-# ফাইল পাথ নিশ্চিত করা
+# Ensure file paths are correct
 GBK_FILE = os.path.join(DATA_DIR, "mirabilis_dod.gbk")
 BLAST_CSV = os.path.join(RESULTS_DIR, "blast_results.csv")
-FLOWER_IMG = os.path.join(DATA_DIR, "mirabilis_jalapa_flower.png") # এক্সটেনশন png নিশ্চিত করুন
+FLOWER_IMG = os.path.join(DATA_DIR, "mirabilis_jalapa_flower.png")
 LOGO_IMG = os.path.join(DATA_DIR, "logo.png")
-PHYLO_TREE_IMG = os.path.join(RESULTS_DIR, "phylogenetic_tree_dod.png") # MEGA থেকে প্রাপ্ত ইমেজ
+PHYLO_TREE_IMG = os.path.join(RESULTS_DIR, "phylogenetic_tree_dod.png") # Image obtained from MEGA12 analysis
 GENOMIC_ANALYSIS_IMG = os.path.join(RESULTS_DIR, "genomic_analysis.png")
-SEQ_LENGTH_IMG = os.path.join(RESULTS_DIR, "sequence_length_comparison.png") # নাম ঠিক করা হয়েছে
+SEQ_LENGTH_IMG = os.path.join(RESULTS_DIR, "sequence_length_comparison.png") 
 
 
-# --- সাইডবার ---
+# --- Sidebar ---
 if os.path.exists(LOGO_IMG):
     st.sidebar.image(LOGO_IMG, width=250)
 else:
-    # যদি ইমেজ না পাওয়া যায় তবে একটি ইমোজি বা টেক্সট দেখাবে
+    # If the image is not found, display an emoji or text
     st.sidebar.title("🧬 DOD Explorer") 
 
 st.sidebar.title("Analysis Control Panel")
 app_mode = st.sidebar.selectbox("Select Analysis Section", 
     ["Dashboard Overview", "Sequence Analysis", "BLAST Homology", "Phylogenetics", "Domain Architecture"])
-  # ["ড্যাশবোর্ড ওভারভিউ", "সিকোয়েন্স এনালাইসিস", "BLAST হোমোলজি", "ফাইলোজেনেটিক্স", "ডোমেইন আর্কিটেকচার"])
+
 st.sidebar.info("Project: Mirabilis jalapa DOD Gene Analysis (Automated Pipeline)")
-st.sidebar.write("Lead Researcher & Developer **Zahidul Hasan**")
+st.sidebar.write("Lead Researcher & Developer: **Zahidul Hasan**")
 st.sidebar.write("Dept. of Botany, University of Chittagong, Bangladesh")
 
 
-# --- ডাটা লোড করার ফাংশন ---
+# --- Data loading function ---
 @st.cache_data
 def load_gbk_data():
     if os.path.exists(GBK_FILE):
@@ -93,7 +93,7 @@ def load_blast_data():
         return pd.read_csv(BLAST_CSV)
     return None
 
-# --- ১. ড্যাশবোর্ড ওভারভিউ ---
+# --- 1. Dashboard Overview ---
 if app_mode == "Dashboard Overview":
     st.title("🧬 Betalain Pathway Explorer")
     st.subheader("In silico Identification and Sequence Analysis of DOD Gene in Mirabilis jalapa")
@@ -104,7 +104,7 @@ if app_mode == "Dashboard Overview":
     if record:
         dna_len = len(record.seq)
         gc_val = gc_fraction(record.seq) * 100
-        # লজিক আপডেট: এখন বায়োলজিক্যাল ট্রান্সলেশন অনুযায়ী দৈর্ঘ্য দেখাবে
+        # Logic Update: Now displays length according to biological translation
         protein_seq = record.seq.translate(to_stop=True)
         protein_len = len(protein_seq)
         
@@ -115,11 +115,9 @@ if app_mode == "Dashboard Overview":
         with col3:
             st.metric("Protein Length", f"{protein_len} aa", delta="Translated (to stop)")
     else:
-        st.warning("GenBank ফাইলটি 'data/mirabilis_dod.gbk' পাথে পাওয়া যায়নি।")
+        st.warning("GenBank file not found in 'data/mirabilis_dod.gbk'.")
 
-# সঠিক ইন্ডেন্টেশন (লাইন ১১০ থেকে শুরু)
-#এই ড্যাশবোর্ডটি *Mirabilis jalapa* গাছের ফুলের রঙের জন্য দায়ী **Betalain Biosynthesis Pathway**-এর একটি মূল এনজাইম **DOD (DOPA 4,5-dioxygenase)** জিনের আণবিক বৈশিষ্ট্য বিশ্লেষণের জন্য তৈরি। 
-#**Betalain Pathway-র সাথে সম্পর্ক:** DOD এনজাইমটি DOPA-কে Betalamic Acid-এ রূপান্তর করে, যা লাল ও হলুদ পিগমেন্ট তৈরির জন্য অপরিহার্য। এই ইন-সিলিকো বিশ্লেষণ জিনের গঠন ও বিবর্তনীয় সম্পর্ক বুঝতে সাহায্য করে।
+
     st.markdown("---")
     st.markdown("""
     ### The Significance and Objective of this Project: 
@@ -128,17 +126,17 @@ if app_mode == "Dashboard Overview":
     **Relationship with the Betalain Pathway:** The DOD enzyme catalyzes the conversion of DOPA into Betalamic Acid, a crucial precursor required for the biosynthesis of red and yellow betalain pigments (betacyanins = red-violet and betaxanthins = yellow-orange). This in silico analysis provides insights into the gene’s structural features and evolutionary relationships.
     """)
      
-    # লক্ষ্য করুন: এই অংশটি এখন 'if app_mode == "ড্যাশবোর্ড ওভারভিউ":' এর ভেতরে আছে
+    
     if os.path.exists(FLOWER_IMG):
         st.image(FLOWER_IMG, caption="Mirabilis jalapa - Flower Pigmentation Study", width=500)
     else:
-        st.warning("ফুলের ইমেজটি data ফোল্ডারে পাওয়া যায়নি।")
+        st.warning("Flower image not found in the data directory.")
 
-# --- ২. সিকোয়েন্স এনালাইসিস ---
+# --- 2. Sequence analysis ---
 elif app_mode == "Sequence Analysis":
     st.title("🔍 Nucleotide and Protein Analysis")
     
-    # সব এনালাইসিসকে একটি মাত্র ট্যাব সেটের অধীনে আনা (আরও প্রফেশনাল)
+    
     tab1, tab2, tab3, tab4 = st.tabs([
         "📊 Genomic Summary", 
         "📏 Length Comparison", 
@@ -146,28 +144,28 @@ elif app_mode == "Sequence Analysis":
         "🧪 Amino Acid Frequency"
     ])
     
-    # ট্যাব ১: স্ট্যাটিক জেনোমিক সামারি ইমেজ
+    # Tab 1: Genomic Summary (Static Image)
     with tab1:
         if os.path.exists(GENOMIC_ANALYSIS_IMG):
             st.subheader("Genomic Composition and BLAST Identity Overview")
             st.image(GENOMIC_ANALYSIS_IMG, use_container_width=True)
             st.caption("Visual Summary of DNA Composition and Homology Search")
         else:
-            st.error("Genomic Analysis ইমেজটি পাওয়া যায়নি।")
+            st.error("Genomic Analysis image not found.")
             
-    # ট্যাব ২: সিকোয়েন্স লেন্থ কম্পারিজন ইমেজ
+    # Tab 2: Sequence Length Comparison Image
     with tab2:
         if os.path.exists(SEQ_LENGTH_IMG):
             st.subheader("Protein Sequence Length Comparison")
             st.image(SEQ_LENGTH_IMG, use_container_width=True)
-            st.info("পর্যবেক্ষণ: এখানে দেখা যাচ্ছে Mirabilis jalapa এর প্রোটিন দৈর্ঘ্য (২৬৭ aa) অন্যান্য হোমোলোগাস সিকোয়েন্সের কাছাকাছি।")
+            st.info("Observation: Here we can see the protein length (267 aa) of Mirabilis jalapa is similar to other homologous sequences.")
         else:
-            st.error("Sequence Length Comparison ইমেজটি পাওয়া যায়নি।")
+            st.error("Sequence Length Comparison image not found.")
 
-    # ডাটা লোড করা (পরের ট্যাবগুলোর জন্য)
+    # Data loading (for subsequent tabs)
     record = load_gbk_data()
     if record:
-        # ট্যাব ৩: ইন্টারঅ্যাক্টিভ DNA পাই চার্ট
+        # Tab 3: Interactive DNA Pie Chart
         with tab3:
             st.write("#### Interactive DNA Base Distribution")
             bases = dict(Counter(record.seq))
@@ -176,9 +174,9 @@ elif app_mode == "Sequence Analysis":
                            color_discrete_sequence=px.colors.qualitative.Pastel)
             st.plotly_chart(fig_dna)
             
-        # ট্যাব ৪: ইন্টারঅ্যাক্টিভ প্রোটিন বার চার্ট
+        # Tab 4: Interactive Protein Bar Chart
         with tab4:
-            st.write("#### প্রোটিন সিকোয়েন্স স্ট্যাটিস্টিকস")
+            st.write("#### Protein Sequence Statistics")
             protein_seq = record.seq.translate(to_stop=True)
             aa_counts = dict(Counter(protein_seq))
             aa_df = pd.DataFrame(list(aa_counts.items()), columns=['Amino Acid', 'Frequency']).sort_values(by='Frequency', ascending=False)
@@ -187,10 +185,10 @@ elif app_mode == "Sequence Analysis":
                           title="Top Amino Acids in DOD Protein")
             st.plotly_chart(fig_aa)
     else:
-        st.error("GenBank ফাইল লোড করা সম্ভব হয়নি।")
+        st.error("GenBank file not found in 'data/mirabilis_dod.gbk'.")
 
-# বাকি সেকশনগুলো অপরিবর্তিত রাখা হলো (BLAST, ফাইলোজেনেটিক্স, ইত্যাদি)
-# --- ৩. BLAST হোমোলজি ---
+
+# --- 3. BLAST Homology Analysis ---
 elif app_mode == "BLAST Homology":
     st.title("💥 BLASTp Search Results")
     df = load_blast_data()
@@ -200,28 +198,28 @@ elif app_mode == "BLAST Homology":
                              hover_name="Organism Name", log_y=True, title="Blast Hits: Identity vs E-value")
         st.plotly_chart(fig_blast, use_container_width=True)
     else:
-        st.warning("BLAST ডাটা ফাইলটি 'results/blast_results.csv' পাথে পাওয়া যায়নি।")
+        st.warning("BLAST data file not found in 'results/blast_results.csv'.")
 
-# --- ৪. ফাইলোজেনেটিক্স ---
+# --- 4. Phylogenetics ---
 elif app_mode == "Phylogenetics":
     st.title("🌳 Evolutionary Relationships")
     st.markdown("#### Phylogenetic Tree Analysis of DOD Gene")
 
-    # প্রথম ইমেজ: General/Pipeline Tree
+    # First image: General/Pipeline Tree
     tree_img_1 = os.path.join(RESULTS_DIR, "phylogenetic_tree.png")
     if os.path.exists(tree_img_1):
         st.subheader("Pipeline Generated Tree")
         st.image(tree_img_1, caption="Phylogenetic Tree (Auto-generated)", use_container_width=True)
     
-    st.markdown("---") # একটি ডিভাইডার লাইন
+    st.markdown("---") 
 
-    # দ্বিতীয় ইমেজ: MEGA specific Tree
-    # নিশ্চিত করুন পাথ সেটআপে PHYLO_TREE_IMG = "phylogenetic_tree_dod.png" আছে
+    # Second image: MEGA specific Tree
+    # Ensure that PHYLO_TREE_IMG = "phylogenetic_tree_dod.png" is included in the path setup.
     if os.path.exists(PHYLO_TREE_IMG):
         st.subheader("Custom MEGA Analysis")
         st.image(PHYLO_TREE_IMG, caption="Phylogenetic Tree constructed using MEGA 12", use_container_width=True)
         
-        # এনালাইসিসের বিস্তারিত বর্ণনা
+        # Detailed analysis description
         st.info("""
         **Methodology Details (MEGA 12):**
         - **Method:** Neighbor-Joining (NJ)
@@ -229,60 +227,51 @@ elif app_mode == "Phylogenetics":
         - **Model:** Poisson correction
         """)
     
-    # যদি কোনো ইমেজই না পাওয়া যায়
+    # If no image is found
     if not os.path.exists(tree_img_1) and not os.path.exists(PHYLO_TREE_IMG):
-        st.error("দুঃখিত, কোনো ফাইলোজেনেটিক ট্রি ইমেজ পাওয়া যায়নি।")
+        st.error("Sorry, no phylogenetic tree image found.")
         
 
-# --- ৫. ডোমেইন আর্কিটেকচার ---
-# elif app_mode == "ডোমেইন আর্কিটেকচার":
-#     st.title("🏗️ Protein Domain Architecture")
-#     domain_img = os.path.join(RESULTS_DIR, "conserved_domain.png")
-#     if os.path.exists(domain_img):
-#         st.image(domain_img, caption="Conserved Functional Domains", use_container_width=True)
-#     else:
-#         st.error("ডোমেইন ইমেজটি পাওয়া যায়নি।")
 
-# --- ৫. প্রোটিন স্ট্রাকচার এনালাইসিস ---
+# --- 5. Protein Structure Analysis ---
 elif app_mode == "Domain Architecture":
     st.title("🏗️ Protein Structure & Domain Architecture")
     
-    # দুটি ট্যাব তৈরি করা (একটি ৩ডি ভিউয়ের জন্য, একটি ডোমেইন ইমেজের জন্য)
+    # Set up two tabs — 3D view and domain image display
     tab_3d, tab_domain = st.tabs(["🧬 3D Interactive Model", "🖼️ Conserved Domains"])
     
     with tab_3d:
         st.subheader("Interactive 3D Structure (SWISS-MODEL Prediction)")
         
-        # PDB ফাইল পাথ (নিশ্চিত করুন model_01.pdb ফাইলটি results ফোল্ডারে আছে)
+        # PDB file path (ensure model_01.pdb file is in the results folder)
         pdb_file = os.path.join(RESULTS_DIR, "model_01.pdb") 
         
         if os.path.exists(pdb_file):
             with open(pdb_file, "r") as f:
                 pdb_data = f.read()
             
-            # ৩ডি ভিউ সেটআপ
+            # 3D Viewer Setup
             view = py3Dmol.view(width=None, height=400)
             view.addModel(pdb_data, 'pdb')
-            view.setStyle({'cartoon': {'color': 'spectrum'}}) # রঙিন কার্টুন স্টাইল
+            view.setStyle({'cartoon': {'color': 'spectrum'}}) # Colorful cartoon style
             view.zoomTo()
-            view.spin(True) # মডেলটি ধীরে ধীরে ঘুরবে
+            view.spin(True) # The model will rotate slowly.
             
             showmol(view, height=400, width='100%')
             
             st.info("The model can be interactively zoomed and rotated using the mouse.")
             
-            # ডাউনলোড বাটন
+            # Download button
             st.download_button("Download PDB File", pdb_data, "DOD_model.pdb")
         else:
-            st.error("PDB ফাইলটি 'results/model_01.pdb' পাথে পাওয়া যায়নি।")
-            st.info("আপনার SWISS-MODEL থেকে PDB ফাইলটি ডাউনলোড করে results ফোল্ডারে রাখুন।")
-
+            st.error("PDB file not found in 'results/model_01.pdb'.")
+            st.info("Please download the PDB file from SWISS-MODEL and place it in the results folder.")
     with tab_domain:
         domain_img = os.path.join(RESULTS_DIR, "conserved_domain.png")
         if os.path.exists(domain_img):
             st.image(domain_img, caption="Conserved Functional Domains", use_container_width=True)
         else:
-            st.error("ডোমেইন ইমেজটি পাওয়া যায়নি।")
+            st.error("Domain image not found.")
 
 st.markdown("---")
 st.caption("© 2026 Zahidul Hasan | Department of Botany, University of Chittagong")
