@@ -106,7 +106,7 @@ if app_mode == "ড্যাশবোর্ড ওভারভিউ":
     **Betalain Pathway-র সাথে সম্পর্ক:** DOD এনজাইমটি DOPA-কে Betalamic Acid-এ রূপান্তর করে, যা লাল ও হলুদ পিগমেন্ট তৈরির জন্য অপরিহার্য। এই ইন-সিলিকো বিশ্লেষণ জিনের গঠন ও বিবর্তনীয় সম্পর্ক বুঝতে সাহায্য করে।
     """)
     
-    st.image("https://upload.wikimedia.org/wikipedia/commons/0/0d/Mirabilis_jalapa_Flower.jpg", caption="Mirabilis jalapa - Flower Pigmentation Study", width=500)
+    st.image("https://commons.wikimedia.org/wiki/File:Gul-Abas-4-O%27clock_plant.JPG#/media/File:Gul-Abas-4-O'clock_plant.JPG", caption="Mirabilis jalapa - Flower Pigmentation Study", width=500)
 
 # --- ২. সিকোয়েন্স এনালাইসিস ---
 elif app_mode == "সিকোয়েন্স এনালাইসিস":
