@@ -5,3 +5,5 @@ seaborn
 numpy
 streamlit
 plotly
+stmol
+py3Dmol
