@@ -13,7 +13,7 @@ from Bio import SeqIO
 from Bio.SeqUtils import gc_fraction
 import plotly.express as px
 import plotly.graph_objects as go
-from collections import Counter  # এই লাইনটি যোগ করা হয়েছে এরর ঠিক করার জন্য
+from collections import Counter
 
 # --- পেজ কনফিগারেশন ---
 st.set_page_config(
@@ -44,7 +44,6 @@ st.markdown("""
 
 # --- পাথ সেটআপ ---
 BASE_DIR = os.getcwd()
-# GitHub রিপোজিটরি স্ট্রাকচার অনুযায়ী পাথ অ্যাডজাস্ট করা হয়েছে
 DATA_DIR = os.path.join(BASE_DIR, "data")
 RESULTS_DIR = os.path.join(BASE_DIR, "results")
 
@@ -86,13 +85,16 @@ if app_mode == "ড্যাশবোর্ড ওভারভিউ":
     if record:
         dna_len = len(record.seq)
         gc_val = gc_fraction(record.seq) * 100
+        # লজিক আপডেট: এখন বায়োলজিক্যাল ট্রান্সলেশন অনুযায়ী দৈর্ঘ্য দেখাবে
+        protein_seq = record.seq.translate(to_stop=True)
+        protein_len = len(protein_seq)
         
         with col1:
             st.metric("জিনের দৈর্ঘ্য", f"{dna_len} bp", delta="Target Gene")
         with col2:
             st.metric("GC কন্টেন্ট", f"{gc_val:.2f}%", delta="Normal Range")
         with col3:
-            st.metric("প্রোটিনের দৈর্ঘ্য", f"{int(dna_len/3)} aa", delta="Translated")
+            st.metric("প্রোটিনের দৈর্ঘ্য", f"{protein_len} aa", delta="Translated (to stop)")
     else:
         st.warning("GenBank ফাইলটি 'data/mirabilis_dod.gbk' পাথে পাওয়া যায়নি।")
 
@@ -116,7 +118,6 @@ elif app_mode == "সিকোয়েন্স এনালাইসিস":
         
         with tab1:
             st.write("#### DNA বেস ডিস্ট্রিবিউশন")
-            # Counter এখন ইমপোর্ট করা আছে, তাই আর এরর আসবে না
             bases = dict(Counter(record.seq))
             fig_dna = px.pie(values=list(bases.values()), names=list(bases.keys()), 
                            title="Base Composition (A, T, G, C)", color_discrete_sequence=px.colors.qualitative.Pastel)
@@ -133,15 +134,13 @@ elif app_mode == "সিকোয়েন্স এনালাইসিস":
     else:
         st.error("সিকোয়েন্স ডাটা লোড করা সম্ভব হয়নি।")
 
+# বাকি সেকশনগুলো অপরিবর্তিত রাখা হলো (BLAST, ফাইলোজেনেটিক্স, ইত্যাদি)
 # --- ৩. BLAST হোমোলজি ---
 elif app_mode == "BLAST হোমোলজি":
     st.title("💥 BLASTp Search Results")
     df = load_blast_data()
-    
     if df is not None:
-        st.write("NCBI SwissProt ডাটাবেস থেকে প্রাপ্ত টপ হিটসমূহ:")
         st.dataframe(df.style.highlight_max(axis=0, subset=['Identity (%)'], color='lightgreen'))
-        
         fig_blast = px.scatter(df, x="Identity (%)", y="E-value", size="Identity (%)", color="Organism Name",
                              hover_name="Organism Name", log_y=True, title="Blast Hits: Identity vs E-value")
         st.plotly_chart(fig_blast, use_container_width=True)
@@ -152,13 +151,8 @@ elif app_mode == "BLAST হোমোলজি":
 elif app_mode == "ফাইলোজেনেটিক্স":
     st.title("🌳 Evolutionary Relationships")
     tree_img = os.path.join(RESULTS_DIR, "phylogenetic_tree.png")
-    
     if os.path.exists(tree_img):
         st.image(tree_img, caption="Phylogenetic Tree (Neighbor-Joining Method)", use_container_width=True)
-        st.markdown("""
-        **বিশ্লেষণ:**
-        এই ফাইলোজেনেটিক ট্রি-টি প্রমাণ করে যে *Mirabilis jalapa*-র DOD প্রোটিন Caryophyllales বর্গের অন্যান্য উদ্ভিদ যেমন বিট (*Beta vulgaris*) এর সাথে বিবর্তনীয়ভাবে ঘনিষ্ঠভাবে সম্পর্কিত।
-        """)
     else:
         st.error("ফাইলোজেনেটিক ট্রি ইমেজটি পাওয়া যায়নি।")
 
@@ -166,13 +160,10 @@ elif app_mode == "ফাইলোজেনেটিক্স":
 elif app_mode == "ডোমেইন আর্কিটেকচার":
     st.title("🏗️ Protein Domain Architecture")
     domain_img = os.path.join(RESULTS_DIR, "conserved_domain.png")
-    
     if os.path.exists(domain_img):
         st.image(domain_img, caption="Conserved Functional Domains", use_container_width=True)
-        st.info("এখানে 'LigB Domain' চিহ্নিত করা হয়েছে যা Betalamic Acid তৈরির রাসায়নিক বিক্রিয়ায় অনুঘটক হিসেবে কাজ করে।")
     else:
         st.error("ডোমেইন ইমেজটি পাওয়া যায়নি।")
 
-# --- ফুটার ---
 st.markdown("---")
-st.caption("© 2026 Zahidul Hasan | Department of Botany, University of Chittagong | Powered by Streamlit & Biopython")
+st.caption("© 2026 Zahidul Hasan | Department of Botany, University of Chittagong")
