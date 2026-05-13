@@ -7,3 +7,5 @@ streamlit
 plotly
 stmol
 py3Dmol
+ipywidgets
+ipython_genutils
