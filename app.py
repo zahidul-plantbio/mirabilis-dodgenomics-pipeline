@@ -53,6 +53,7 @@ BLAST_CSV = os.path.join(RESULTS_DIR, "blast_results.csv")
 FLOWER_IMG = os.path.join(DATA_DIR, "mirabilis_jalapa_flower.png") # এক্সটেনশন png নিশ্চিত করুন
 LOGO_IMG = os.path.join(DATA_DIR, "logo.png")
 PHYLO_TREE_IMG = os.path.join(RESULTS_DIR, "phylogenetic_tree_dod.png") # MEGA থেকে প্রাপ্ত ইমেজ
+GENOMIC_ANALYSIS_IMG = os.path.join(RESULTS_DIR, "genomic_analysis.png")
 
 # --- সাইডবার ---
 if os.path.exists(LOGO_IMG):
@@ -123,16 +124,24 @@ if app_mode == "ড্যাশবোর্ড ওভারভিউ":
 # --- ২. সিকোয়েন্স এনালাইসিস ---
 elif app_mode == "সিকোয়েন্স এনালাইসিস":
     st.title("🔍 নিউক্লিওটাইড এবং প্রোটিন এনালাইসিস")
-    record = load_gbk_data()
     
+    # আপনার তৈরি করা genomic_analysis.png ইমেজটি সবার উপরে দেখাবে
+    if os.path.exists(GENOMIC_ANALYSIS_IMG):
+        st.subheader("Genomic Composition and BLAST Identity Overview")
+        st.image(GENOMIC_ANALYSIS_IMG, caption="Visual Summary of DNA Composition and Homology Search", use_container_width=True)
+        st.markdown("---") # একটি ডিভাইডার লাইন
+    
+    # এরপর ইন্টারঅ্যাক্টিভ চার্টগুলো আসবে
+    record = load_gbk_data()
     if record:
         tab1, tab2 = st.tabs(["DNA কম্পোজিশন", "অ্যামিনো অ্যাসিড ফ্রিকোয়েন্সি"])
         
         with tab1:
-            st.write("#### DNA বেস ডিস্ট্রিবিউশন")
+            st.write("#### Interactive DNA Base Distribution")
             bases = dict(Counter(record.seq))
             fig_dna = px.pie(values=list(bases.values()), names=list(bases.keys()), 
-                           title="Base Composition (A, T, G, C)", color_discrete_sequence=px.colors.qualitative.Pastel)
+                           title="Base Composition (A, T, G, C)", 
+                           color_discrete_sequence=px.colors.qualitative.Pastel)
             st.plotly_chart(fig_dna)
             
         with tab2:
@@ -141,10 +150,11 @@ elif app_mode == "সিকোয়েন্স এনালাইসিস":
             aa_counts = dict(Counter(protein_seq))
             aa_df = pd.DataFrame(list(aa_counts.items()), columns=['Amino Acid', 'Frequency']).sort_values(by='Frequency', ascending=False)
             
-            fig_aa = px.bar(aa_df, x='Amino Acid', y='Frequency', color='Frequency', title="Top Amino Acids in DOD Protein")
+            fig_aa = px.bar(aa_df, x='Amino Acid', y='Frequency', color='Frequency', 
+                          title="Top Amino Acids in DOD Protein")
             st.plotly_chart(fig_aa)
     else:
-        st.error("সিকোয়েন্স ডাটা লোড করা সম্ভব হয়নি।")
+        st.error("GenBank ফাইল লোড করা সম্ভব হয়নি।")
 
 # বাকি সেকশনগুলো অপরিবর্তিত রাখা হলো (BLAST, ফাইলোজেনেটিক্স, ইত্যাদি)
 # --- ৩. BLAST হোমোলজি ---
