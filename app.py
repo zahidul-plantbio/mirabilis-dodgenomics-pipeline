@@ -7,8 +7,6 @@ Author: Zahidul Hasan
 import streamlit as st
 import pandas as pd
 import os
-import matplotlib.pyplot as plt
-import seaborn as sns
 from Bio import SeqIO
 from Bio.SeqUtils import gc_fraction
 import plotly.express as px
@@ -43,17 +41,20 @@ st.markdown("""
     """, unsafe_allow_html=True)
 
 # --- পাথ সেটআপ ---
-BASE_DIR = os.getcwd()
+BASE_DIR = os.path.dirname(__file__) 
 DATA_DIR = os.path.join(BASE_DIR, "data")
 RESULTS_DIR = os.path.join(BASE_DIR, "results")
 
 # ফাইল পাথ নিশ্চিত করা
 GBK_FILE = os.path.join(DATA_DIR, "mirabilis_dod.gbk")
 BLAST_CSV = os.path.join(RESULTS_DIR, "blast_results.csv")
-FLOWER_IMG = os.path.join(DATA_DIR, "mirabilis_jalapa_flower.png") # এক্সটেনশন png নিশ্চিত করুন
+TREE_IMG = os.path.join(RESULTS_DIR, "phylogenetic_tree.png")
+DOMAIN_IMG = os.path.join(RESULTS_DIR, "conserved_domain.png")
+FLOWER_IMG = os.path.join(DATA_DIR, "mirabilis_jalapa_flower.png")
 
 # --- সাইডবার ---
-st.sidebar.image("https://upload.wikimedia.org/wikipedia/commons/thumb/e/e5/Phylo_tree.svg/1200px-Phylo_tree.svg.png", width=100)
+LOGO_URL = "https://cdn-icons-png.flaticon.com/128/3015/3015511.png"
+st.sidebar.image(LOGO_URL, width=80)
 st.sidebar.title("অ্যানালাইসিস কন্ট্রোল")
 app_mode = st.sidebar.selectbox("সেকশন নির্বাচন করুন", 
     ["ড্যাশবোর্ড ওভারভিউ", "সিকোয়েন্স এনালাইসিস", "BLAST হোমোলজি", "ফাইলোজেনেটিক্স", "ডোমেইন আর্কিটেকচার"])
@@ -80,37 +81,34 @@ if app_mode == "ড্যাশবোর্ড ওভারভিউ":
     st.title("🧬 Betalain Pathway Explorer")
     st.subheader("In silico Identification and Sequence Analysis of DOD Gene in Mirabilis jalapa")
     
-    col1, col2, col3 = st.columns(3)
-    
     record = load_gbk_data()
     if record:
         dna_len = len(record.seq)
         gc_val = gc_fraction(record.seq) * 100
-        # লজিক আপডেট: এখন বায়োলজিক্যাল ট্রান্সলেশন অনুযায়ী দৈর্ঘ্য দেখাবে
+        # বায়োলজিক্যাল ট্রান্সলেশন অনুযায়ী দৈর্ঘ্য (২৬৭ aa)
         protein_seq = record.seq.translate(to_stop=True)
         protein_len = len(protein_seq)
         
+        col1, col2, col3 = st.columns(3)
         with col1:
             st.metric("জিনের দৈর্ঘ্য", f"{dna_len} bp", delta="Target Gene")
         with col2:
             st.metric("GC কন্টেন্ট", f"{gc_val:.2f}%", delta="Normal Range")
         with col3:
-            st.metric("প্রোটিনের দৈর্ঘ্য", f"{protein_len} aa", delta="Translated (to stop)")
-    else:
-        st.warning("GenBank ফাইলটি 'data/mirabilis_dod.gbk' পাথে পাওয়া যায়নি।")
+            st.metric("প্রোটিনের দৈর্ঘ্য", f"{protein_len} aa", delta="Translated")
 
     st.markdown("---")
+    
+    # লোকাল ইমেজ প্রদর্শনের লজিক (ইন্ডেন্টেশন ঠিক করা হয়েছে)
+    if os.path.exists(FLOWER_IMG):
+        st.image(FLOWER_IMG, caption="Mirabilis jalapa - Flower Pigmentation Study", width=500)
+    else:
+        st.warning("ফুলের ইমেজটি data ফোল্ডারে পাওয়া যায়নি।")
+
     st.markdown("""
     ### প্রজেক্টের গুরুত্ব ও উদ্দেশ্য:
     এই ড্যাশবোর্ডটি *Mirabilis jalapa* গাছের ফুলের রঙের জন্য দায়ী **Betalain Biosynthesis Pathway**-এর একটি মূল এনজাইম **DOD (DOPA 4,5-dioxygenase)** জিনের আণবিক বৈশিষ্ট্য বিশ্লেষণের জন্য তৈরি। 
-    
-    **Betalain Pathway-র সাথে সম্পর্ক:** DOD এনজাইমটি DOPA-কে Betalamic Acid-এ রূপান্তর করে, যা লাল ও হলুদ পিগমেন্ট তৈরির জন্য অপরিহার্য। এই ইন-সিলিকো বিশ্লেষণ জিনের গঠন ও বিবর্তনীয় সম্পর্ক বুঝতে সাহায্য করে।
     """)
-    
-if os.path.exists(FLOWER_IMG):
-    st.image(FLOWER_IMG, caption="Mirabilis jalapa - Flower Pigmentation Study", width=500) # ৪টি স্পেস দিন
-else:
-    st.warning("ফুলের ইমেজটি data ফোল্ডারে পাওয়া যায়নি।")
 
 # --- ২. সিকোয়েন্স এনালাইসিস ---
 elif app_mode == "সিকোয়েন্স এনালাইসিস":
@@ -138,7 +136,6 @@ elif app_mode == "সিকোয়েন্স এনালাইসিস":
     else:
         st.error("সিকোয়েন্স ডাটা লোড করা সম্ভব হয়নি।")
 
-# বাকি সেকশনগুলো অপরিবর্তিত রাখা হলো (BLAST, ফাইলোজেনেটিক্স, ইত্যাদি)
 # --- ৩. BLAST হোমোলজি ---
 elif app_mode == "BLAST হোমোলজি":
     st.title("💥 BLASTp Search Results")
@@ -149,25 +146,24 @@ elif app_mode == "BLAST হোমোলজি":
                              hover_name="Organism Name", log_y=True, title="Blast Hits: Identity vs E-value")
         st.plotly_chart(fig_blast, use_container_width=True)
     else:
-        st.warning("BLAST ডাটা ফাইলটি 'results/blast_results.csv' পাথে পাওয়া যায়নি।")
+        st.warning("BLAST ডাটা ফাইলটি 'results/blast_results.csv' পাওয়া যায়নি।")
 
 # --- ৪. ফাইলোজেনেটিক্স ---
 elif app_mode == "ফাইলোজেনেটিক্স":
     st.title("🌳 Evolutionary Relationships")
-    tree_img = os.path.join(RESULTS_DIR, "phylogenetic_tree.png")
-    if os.path.exists(tree_img):
-        st.image(tree_img, caption="Phylogenetic Tree (Neighbor-Joining Method)", use_container_width=True)
+    if os.path.exists(TREE_IMG):
+        st.image(TREE_IMG, caption="Phylogenetic Tree (Neighbor-Joining Method)", use_container_width=True)
     else:
-        st.error("ফাইলোজেনেটিক ট্রি ইমেজটি পাওয়া যায়নি।")
+        st.error(f"ইমেজ ফাইলটি পাওয়া যায়নি। পাথ: {TREE_IMG}")
 
 # --- ৫. ডোমেইন আর্কিটেকচার ---
 elif app_mode == "ডোমেইন আর্কিটেকচার":
     st.title("🏗️ Protein Domain Architecture")
-    domain_img = os.path.join(RESULTS_DIR, "conserved_domain.png")
-    if os.path.exists(domain_img):
-        st.image(domain_img, caption="Conserved Functional Domains", use_container_width=True)
+    if os.path.exists(DOMAIN_IMG):
+        st.image(DOMAIN_IMG, caption="Conserved Functional Domains (LigB Superfamily)", use_container_width=True)
     else:
-        st.error("ডোমেইন ইমেজটি পাওয়া যায়নি।")
+        st.warning(f"ডোমেইন ইমেজটি পাওয়া যায়নি: {DOMAIN_IMG}")
 
+# --- ফুটার ---
 st.markdown("---")
 st.caption("© 2026 Zahidul Hasan | Department of Botany, University of Chittagong")
