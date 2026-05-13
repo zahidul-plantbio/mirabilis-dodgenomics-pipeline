@@ -125,48 +125,53 @@ if app_mode == "ড্যাশবোর্ড ওভারভিউ":
 elif app_mode == "সিকোয়েন্স এনালাইসিস":
     st.title("🔍 নিউক্লিওটাইড এবং প্রোটিন এনালাইসিস")
     
-    # ট্যাব তৈরি করা
-    tab_summary, tab_interactive = st.tabs(["📊 এনালাইসিস সামারি (ইমেজ)", "📈 ইন্টারঅ্যাক্টিভ চার্ট"])
-
-    with tab_summary:
-        st.write("#### প্রজেক্টের স্ট্যাটিক এনালাইসিস রিপোর্ট")
-        
-        # প্রথম ইমেজ: Genomic Composition
+    # ইমেজগুলোর জন্য নতুন ট্যাব তৈরি করা
+    img_tab1, img_tab2 = st.tabs(["📊 Genomic Summary", "📏 Length Comparison"])
+    
+    with img_tab1:
+        # প্রথম ইমেজ: Genomic Composition (GC Content & BLAST)
         if os.path.exists(GENOMIC_ANALYSIS_IMG):
-            st.subheader("Genomic Composition and BLAST Identity")
+            st.subheader("Genomic Composition and BLAST Identity Overview")
             st.image(GENOMIC_ANALYSIS_IMG, use_container_width=True)
-            st.markdown("---")
-        
+            st.caption("Visual Summary of DNA Composition and Homology Search")
+        else:
+            st.error("Genomic Analysis ইমেজটি পাওয়া যায়নি।")
+            
+    with img_tab2:
         # দ্বিতীয় ইমেজ: Sequence Length Comparison
         if os.path.exists(SEQ_LENGTH_IMG):
             st.subheader("Protein Sequence Length Comparison")
-            st.image(SEQ_LENGTH_IMG, caption="Comparative analysis across species", use_container_width=True)
-
-    with tab_interactive:
-        record = load_gbk_data()
-        if record:
-            # সাব-ট্যাব (ট্যাবের ভেতর ট্যাব)
-            sub_tab1, sub_tab2 = st.tabs(["DNA কম্পোজিশন", "অ্যামিনো অ্যাসিড ফ্রিকোয়েন্সি"])
-            
-            with sub_tab1:
-                st.write("#### Interactive DNA Base Distribution")
-                bases = dict(Counter(record.seq))
-                fig_dna = px.pie(values=list(bases.values()), names=list(bases.keys()), 
-                               title="Base Composition", 
-                               color_discrete_sequence=px.colors.qualitative.Pastel)
-                st.plotly_chart(fig_dna)
-                
-            with sub_tab2:
-                st.write("#### প্রোটিন সিকোয়েন্স স্ট্যাটিস্টিকস")
-                protein_seq = record.seq.translate(to_stop=True)
-                aa_counts = dict(Counter(protein_seq))
-                aa_df = pd.DataFrame(list(aa_counts.items()), columns=['Amino Acid', 'Frequency']).sort_values(by='Frequency', ascending=False)
-                
-                fig_aa = px.bar(aa_df, x='Amino Acid', y='Frequency', color='Frequency', 
-                              title="Top Amino Acids in DOD Protein")
-                st.plotly_chart(fig_aa)
+            st.image(SEQ_LENGTH_IMG, use_container_width=True)
+            st.info("পর্যবেক্ষণ: এখানে দেখা যাচ্ছে Mirabilis jalapa এর প্রোটিন দৈর্ঘ্য (২৬৭ aa) অন্যান্য হোমোলোগাস সিকোয়েন্সের কাছাকাছি।")
         else:
-            st.error("GenBank ফাইল লোড করা সম্ভব হয়নি।")
+            st.error("Sequence Length Comparison ইমেজটি পাওয়া যায়নি।")
+
+    st.markdown("---")
+    
+    # এরপর আগের ইন্টারঅ্যাক্টিভ ট্যাবগুলো (DNA & Protein Stats) আসবে
+    record = load_gbk_data()
+    if record:
+        tab1, tab2 = st.tabs(["DNA কম্পোজিশন", "অ্যামিনো অ্যাসিড ফ্রিকোয়েন্সি"])
+        
+        with tab1:
+            st.write("#### Interactive DNA Base Distribution")
+            bases = dict(Counter(record.seq))
+            fig_dna = px.pie(values=list(bases.values()), names=list(bases.keys()), 
+                           title="Base Composition (A, T, G, C)", 
+                           color_discrete_sequence=px.colors.qualitative.Pastel)
+            st.plotly_chart(fig_dna)
+            
+        with tab2:
+            st.write("#### প্রোটিন সিকোয়েন্স স্ট্যাটিস্টিকস")
+            protein_seq = record.seq.translate(to_stop=True)
+            aa_counts = dict(Counter(protein_seq))
+            aa_df = pd.DataFrame(list(aa_counts.items()), columns=['Amino Acid', 'Frequency']).sort_values(by='Frequency', ascending=False)
+            
+            fig_aa = px.bar(aa_df, x='Amino Acid', y='Frequency', color='Frequency', 
+                          title="Top Amino Acids in DOD Protein")
+            st.plotly_chart(fig_aa)
+    else:
+        st.error("GenBank ফাইল লোড করা সম্ভব হয়নি।")
 
 # বাকি সেকশনগুলো অপরিবর্তিত রাখা হলো (BLAST, ফাইলোজেনেটিক্স, ইত্যাদি)
 # --- ৩. BLAST হোমোলজি ---
