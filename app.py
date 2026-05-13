@@ -14,6 +14,8 @@ from Bio.SeqUtils import gc_fraction
 import plotly.express as px
 import plotly.graph_objects as go
 from collections import Counter
+from stmol import showmol
+import py3Dmol
 
 # --- পেজ কনফিগারেশন ---
 st.set_page_config(
@@ -225,13 +227,54 @@ elif app_mode == "ফাইলোজেনেটিক্স":
         
 
 # --- ৫. ডোমেইন আর্কিটেকচার ---
+# elif app_mode == "ডোমেইন আর্কিটেকচার":
+#     st.title("🏗️ Protein Domain Architecture")
+#     domain_img = os.path.join(RESULTS_DIR, "conserved_domain.png")
+#     if os.path.exists(domain_img):
+#         st.image(domain_img, caption="Conserved Functional Domains", use_container_width=True)
+#     else:
+#         st.error("ডোমেইন ইমেজটি পাওয়া যায়নি।")
+
+# --- ৫. প্রোটিন স্ট্রাকচার এনালাইসিস ---
 elif app_mode == "ডোমেইন আর্কিটেকচার":
-    st.title("🏗️ Protein Domain Architecture")
-    domain_img = os.path.join(RESULTS_DIR, "conserved_domain.png")
-    if os.path.exists(domain_img):
-        st.image(domain_img, caption="Conserved Functional Domains", use_container_width=True)
-    else:
-        st.error("ডোমেইন ইমেজটি পাওয়া যায়নি।")
+    st.title("🏗️ Protein Structure & Domain Architecture")
+    
+    # দুটি ট্যাব তৈরি করা (একটি ৩ডি ভিউয়ের জন্য, একটি ডোমেইন ইমেজের জন্য)
+    tab_3d, tab_domain = st.tabs(["🧬 3D Interactive Model", "🖼️ Conserved Domains"])
+    
+    with tab_3d:
+        st.subheader("Interactive 3D Structure (SWISS-MODEL Prediction)")
+        
+        # PDB ফাইল পাথ (নিশ্চিত করুন model_01.pdb ফাইলটি results ফোল্ডারে আছে)
+        pdb_file = os.path.join(RESULTS_DIR, "model_01.pdb") 
+        
+        if os.path.exists(pdb_file):
+            with open(pdb_file, "r") as f:
+                pdb_data = f.read()
+            
+            # ৩ডি ভিউ সেটআপ
+            view = py3Dmol.view(width=800, height=500)
+            view.addModel(pdb_data, 'pdb')
+            view.setStyle({'cartoon': {'color': 'spectrum'}}) # রঙিন কার্টুন স্টাইল
+            view.zoomTo()
+            view.spin(True) # মডেলটি ধীরে ধীরে ঘুরবে
+            
+            showmol(view, height=500, width=800)
+            
+            st.info("মাউস ব্যবহার করে আপনি মডেলটি জুম (Zoom) বা রোটেট (Rotate) করতে পারেন।")
+            
+            # ডাউনলোড বাটন
+            st.download_button("Download PDB File", pdb_data, "DOD_model.pdb")
+        else:
+            st.error("PDB ফাইলটি 'results/model_01.pdb' পাথে পাওয়া যায়নি।")
+            st.info("আপনার SWISS-MODEL থেকে PDB ফাইলটি ডাউনলোড করে results ফোল্ডারে রাখুন।")
+
+    with tab_domain:
+        domain_img = os.path.join(RESULTS_DIR, "conserved_domain.png")
+        if os.path.exists(domain_img):
+            st.image(domain_img, caption="Conserved Functional Domains", use_container_width=True)
+        else:
+            st.error("ডোমেইন ইমেজটি পাওয়া যায়নি।")
 
 st.markdown("---")
 st.caption("© 2026 Zahidul Hasan | Department of Botany, University of Chittagong")
