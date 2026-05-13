@@ -76,8 +76,8 @@ app_mode = st.sidebar.selectbox("Select Analysis Section",
     ["Dashboard Overview", "Sequence Analysis", "BLAST Homology", "Phylogenetics", "Domain Architecture"])
   # ["ড্যাশবোর্ড ওভারভিউ", "সিকোয়েন্স এনালাইসিস", "BLAST হোমোলজি", "ফাইলোজেনেটিক্স", "ডোমেইন আর্কিটেকচার"])
 st.sidebar.info("Project: Mirabilis jalapa DOD Gene Analysis (Automated Pipeline)")
-st.sidebar.write("Built by: **Zahidul Hasan**")
-st.sidebar.write("Department of Botany, University of Chittagong, Bangladesh")
+st.sidebar.write("Lead Researcher & Developer **Zahidul Hasan**")
+st.sidebar.write("Dept. of Botany, University of Chittagong, Bangladesh")
 
 
 # --- ডাটা লোড করার ফাংশন ---
